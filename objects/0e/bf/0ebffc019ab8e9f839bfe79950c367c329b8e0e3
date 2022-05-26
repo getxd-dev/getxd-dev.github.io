@@ -1,0 +1,9 @@
+#KubeJS Common Properties
+#Wed May 25 17:29:00 SGT 2022
+announceReload=false
+disableClassFilter=false
+serverOnly=false
+hideServerScriptErrors=false
+packmode=default
+printRemappedClasses=false
+debugInfo=false

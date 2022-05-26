@@ -1,0 +1,8 @@
+{
+    "replace": true,
+    "level": 5,
+    "block": [
+        "minecraft:copper_ore",
+        "create:ochrum"
+    ]
+}

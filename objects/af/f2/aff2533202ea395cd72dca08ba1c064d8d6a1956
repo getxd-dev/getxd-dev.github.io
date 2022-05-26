@@ -1,0 +1,13 @@
+{
+  "allowMovement": {
+    "net.minecraft.class_434": true,
+    "net.minecraft.class_433": true,
+    "me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI": true,
+    "net.coderbot.iris.gui.screen.ShaderPackScreen": true,
+    "net.levelz.gui.LevelzScreen": true,
+    "me.flashyreese.mods.reeses_sodium_options.client.gui.SodiumVideoOptionsScreen": true
+  },
+  "hideBackground": {
+    "net.levelz.gui.LevelzScreen": true
+  }
+}
