@@ -1,0 +1,5 @@
+#Configure file for Pistorder
+#Sun May 29 17:43:53 SGT 2022
+dynamically_information_update=true
+swing_hand=true
+keybinding_clear=key.keyboard.p
