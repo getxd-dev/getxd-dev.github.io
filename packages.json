@@ -2,10 +2,10 @@
   "minimumVersion" : 1,
   "packages" : [
     {
-      "title" : "Vets",
-      "name" : "Vets",
-      "version" : "2022-06-02-17-22-16",
-      "location" : "vets.json",
+      "title" : "Vets MODDED",
+      "name" : "Vets MODDED",
+      "version" : "2022-06-04-18-34-02",
+      "location" : "vets-modded.json",
       "priority" : 0
     }
   ]

@@ -1,8 +1,0 @@
-{
-    "replace": false,
-    "level": 19,
-    "block": [
-        "techreborn:pyrite_ore",
-        "twigs:bloodstone"
-    ]
-}

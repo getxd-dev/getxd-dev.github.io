@@ -1,8 +1,0 @@
-{
-	"replace": true,
-	"level": 24,
-	"block": [
-		"techreborn:peridot_ore",
-		"betterend:violecite"
-	]
-}
