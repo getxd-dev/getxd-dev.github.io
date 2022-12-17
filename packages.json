@@ -1,0 +1,12 @@
+{
+  "minimumVersion" : 1,
+  "packages" : [
+    {
+      "title" : "Project Curiosity",
+      "name" : "Project Curiosity",
+      "version" : "2022-12-17-17-42-20",
+      "location" : "project-curiosity.json",
+      "priority" : 0
+    }
+  ]
+}

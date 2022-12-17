@@ -1,0 +1,80 @@
+type = hud
+
+customization-meta {
+  randomgroup = 1
+  keepaspectratio = false
+  backgroundimage = assets/backgroundloading.jpg
+  autoscale_baseheight = 1001
+  renderorder = foreground
+  autoscale_basewidth = 1920
+  randommode = false
+  randomonlyfirsttime = false
+  backgroundcolor = 
+}
+
+customization {
+  visible = false
+  x = -7
+  action = editlogo
+  y = -19
+}
+
+customization {
+  x = -4
+  action = editprogressbar
+  y = -113
+}
+
+customization {
+  path = assets/titlemenu.png
+  orientation = top-left
+  x = 289
+  width = 380
+  action = addtexture
+  actionid = 475ba1b3-6cf4-4f44-bc86-9d47041cfbb11667456771773
+  y = 21
+  height = 356
+}
+
+customization {
+  orientation = top-left
+  basecolor = #ffff00
+  shadow = true
+  rotation = 20.0
+  x = 307
+  actionid = 9798334d-537d-46c5-92c1-bca98a1fb6f11667456920577
+  action = addsplash
+  y = 245
+  scale = 1.0
+  refresh = false
+  text = hi from getxd#6152 :)
+  bouncing = true
+}
+
+customization {
+  orientation = top-left
+  loop = true
+  channel = master
+  x = 1
+  width = 50
+  action = custom_layout_element:fancymenu_extension:audio_item
+  actionid = 106f7df5-e0f9-4782-8f69-e5dcfb2b30671667456995682
+  y = 271
+  once_per_session = false
+  audio_source:db2e14be-7035-48c5-9268-5349613636e71667457219133 = assets/waiting.ogg;EXTERNAL_LOCAL;100;0
+  height = 50
+}
+
+customization {
+  orientation = top-left
+  shadow = false
+  x = 721
+  textcolor = #ffffff
+  action = addtext
+  actionid = e95d0c5f-1985-465e-a752-82aa7340a99f1667457273950
+  y = 488
+  scale = 1.0
+  alignment = left
+  value = credits to random guy who took this screenshot
+}
+

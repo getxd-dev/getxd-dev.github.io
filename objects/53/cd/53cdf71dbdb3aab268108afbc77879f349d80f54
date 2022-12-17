@@ -1,0 +1,331 @@
+type = menu
+
+customization-meta {
+  identifier = net.minecraft.client.gui.screen.MainMenuScreen
+  randomgroup = 1
+  renderorder = foreground
+  randommode = false
+  custom_menu_title = Project Curiosity
+  randomonlyfirsttime = false
+}
+
+customization {
+  name = coolpanorama
+  action = setbackgroundpanorama
+}
+
+customization {
+  baseheight = 1001
+  action = autoscale
+  basewidth = 1920
+}
+
+customization {
+  keepaspectratio = false
+  action = backgroundoptions
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_multiplayer_button%
+  action = hidebutton
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_multiplayer_button%
+  orientation = top-left
+  x = 49
+  action = movebutton
+  y = 190
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_multiplayer_button%
+  width = 203
+  action = resizebutton
+  height = 20
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_multiplayer_button%
+  action = setbuttonlabel
+  value = Play
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_accessibility_button%
+  orientation = bottom-centered
+  x = 455
+  action = movebutton
+  y = -24
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_accessibility_button%
+  width = 19
+  action = resizebutton
+  height = 20
+}
+
+customization {
+  identifier = %id=376322%
+  orientation = mid-left
+  x = 18
+  action = movebutton
+  y = -29
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_options_button%
+  orientation = top-left
+  x = 49
+  action = movebutton
+  y = 222
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_options_button%
+  width = 203
+  action = resizebutton
+  height = 20
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_quit_button%
+  orientation = top-left
+  x = 49
+  action = movebutton
+  y = 254
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_quit_button%
+  width = 203
+  action = resizebutton
+  height = 20
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_language_button%
+  action = hidebutton
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_singleplayer_button%
+  action = hidebutton
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_singleplayer_button%
+  orientation = top-left
+  x = 187
+  action = movebutton
+  y = 75
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_singleplayer_button%
+  width = 345
+  action = resizebutton
+  height = 197
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_singleplayer_button%
+  loopbackgroundanimations = true
+  restartbackgroundanimations = true
+  action = setbuttontexture
+  backgroundnormal = assets\titlemenu.png
+}
+
+customization {
+  identifier = %id=button_compatibility_id:forge_titlescreen_mods_button%
+  orientation = top-left
+  x = 913
+  action = movebutton
+  y = 451
+}
+
+customization {
+  identifier = %id=button_compatibility_id:forge_titlescreen_mods_button%
+  width = 41
+  action = resizebutton
+  height = 20
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_realms_button%
+  action = hidebutton
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_realms_button%
+  orientation = top-left
+  x = 142
+  action = movebutton
+  y = 182
+}
+
+customization {
+  identifier = %id=button_compatibility_id:mc_titlescreen_realms_button%
+  width = 101
+  action = resizebutton
+  height = 20
+}
+
+customization {
+  orientation = top-left
+  hidden = false
+  x = 346
+  width = 268
+  action = deep_customization_element:title_screen_forge_top
+  actionid = 1406a353-e8a9-4aa4-ab71-c5bff528113c1667369544332
+  y = 4
+  height = 19
+}
+
+customization {
+  orientation = top-left
+  hidden = false
+  x = 2
+  width = 108
+  action = deep_customization_element:title_screen_branding
+  actionid = a80a32dc-9418-410b-9b52-9b08ee6e3fce1667369544353
+  y = 459
+  height = 40
+}
+
+customization {
+  orientation = top-left
+  hidden = true
+  x = 731
+  width = 228
+  action = deep_customization_element:title_screen_forge_copyright
+  actionid = a25e7957-4c4c-44bd-9b91-4662a255d1b21667369544353
+  y = 481
+  height = 9
+}
+
+customization {
+  orientation = top-left
+  hidden = true
+  x = 583
+  width = 13
+  action = deep_customization_element:title_screen_realms_notification
+  actionid = 35ede4cb-3bd1-4891-8766-cd1268b5cb2b1667369544353
+  y = 225
+  height = 13
+}
+
+customization {
+  orientation = top-left
+  hidden = true
+  x = 343
+  width = 274
+  action = deep_customization_element:title_screen_logo
+  actionid = b8051aa1-7742-49c4-b39e-3b08cdb98f2e1667369544354
+  y = 30
+  height = 52
+}
+
+customization {
+  orientation = original
+  splash_color = #ffff00
+  hidden = false
+  x = 0
+  width = 60
+  splash_rotation = -20
+  action = deep_customization_element:title_screen_splash
+  actionid = 13a122e3-be8a-4701-80a1-dcdd6af273861667369544354
+  y = 0
+  height = 30
+}
+
+customization {
+  path = assets/titlemenu.png
+  orientation = top-left
+  x = 494
+  width = 386
+  action = addtexture
+  actionid = 1ec7c03d-7052-46bd-8bab-0fa2251fa8221667370376416
+  y = 66
+  height = 346
+}
+
+customization {
+  orientation = top-left
+  basecolor = #ffff00
+  shadow = true
+  rotation = 20.0
+  scale = 1.0
+  refresh = false
+  bouncing = true
+  vanilla-like = true
+  x = 0
+  actionid = 9643fc1e-9789-445a-a8ba-7bede6df23cd1667370681808
+  action = addsplash
+  y = 10
+  text = 
+}
+
+customization {
+  orientation = top-left
+  basecolor = #ffff00
+  shadow = true
+  rotation = 20.0
+  scale = 1.0
+  refresh = false
+  bouncing = true
+  vanilla-like = true
+  x = 0
+  actionid = 51240f12-fc88-4ca2-bdd4-4019772fa1571667370684109
+  action = addsplash
+  y = 10
+  text = 
+}
+
+customization {
+  orientation = top-left
+  basecolor = #ffff00
+  shadow = true
+  splashfilepath = assets\splash.txt
+  rotation = 20.0
+  scale = 1.5
+  refresh = true
+  bouncing = true
+  vanilla-like = false
+  x = 525
+  actionid = ad2886ca-cdf7-44fe-ba9d-883d04ce9c011667375040242
+  action = addsplash
+  y = 277
+}
+
+customization {
+  orientation = top-left
+  loopbackgroundanimations = true
+  restartbackgroundanimations = true
+  buttonaction = openlink
+  x = 49
+  width = 203
+  actionid = 3aa6c709-ff42-4971-908a-2c2835fa14351671268601229
+  action = addbutton
+  y = 189
+  label = Play
+  value = 
+  height = 20
+}
+
+customization {
+  orientation = top-left
+  loopbackgroundanimations = true
+  restartbackgroundanimations = true
+  buttonaction = opengui
+  x = 383
+  width = 205
+  actionid = 18d68d96-c980-4a71-9b0c-51fcad0602b01671268632488
+  action = addbutton
+  y = 362
+  label = Set Offline Username
+  value = technicianlp.reauth.gui.OfflineLoginScreen
+  height = 21
+}
+

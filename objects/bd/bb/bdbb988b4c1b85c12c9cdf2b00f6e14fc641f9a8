@@ -1,0 +1,9 @@
+{
+	"x": -100,
+	"y": 24,
+	"width": 200,
+	"height": 20,
+	"langKey": "packmenu.enterserver",
+	"action": "CONNECT_TO_SERVER",
+	"data": "smp.getxd.me"
+}
