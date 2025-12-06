@@ -4,66 +4,43 @@
 <title>News Page</title>
 <style>
     body {
-        /* Swing handles basic fonts well */
-        font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
-        background-color: #ffffff;
-        color: #000000;
+        /* Set background to transparent here */
+        background-color: transparent;
+        color: #ffffff; /* Changed text to white for visibility on dark app backgrounds */
+        font-family: 'Lucida Grande', sans-serif;
         margin: 10px;
     }
 
-    /* NOTE ON SWING RENDERING:
-       1. Swing ignores 'border-radius'. The boxes will likely appear rectangular 
-          unless you use a 3rd party library like 'The CSSBox'.
-       2. Swing struggles with 'rgba' transparency. We use a light hex color 
-          (#f2f2f2) to simulate a "pane" on top of the background.
-    */
-    .patch-container {
-        width: 100%;
-        margin-bottom: 15px;
-    }
-
+    /* The patch note box itself */
     .patch-box {
-        /* Use a light grey to simulate the patch note area */
-        background-color: #f2f2f2; 
-        border: 1px solid #cccccc;
+        /* A semi-transparent white background for the note box.
+           NOTE: Swing CSS supports hex, but rarely supports RGBA 
+           for alpha transparency perfectly. 
+           We use a solid color here to ensure it renders, 
+           or you can try #222222 for a dark theme look. */
+        background-color: #2b2b2b; 
+        border: 1px solid #555555;
         padding: 10px;
-        margin: 5px;
+        margin-bottom: 15px;
+        color: #eeeeee;
     }
 
-    h1 {
-        font-size: 16px;
-        color: #2c3e50;
-        margin-bottom: 5px;
-    }
-
-    .date {
-        font-size: 10px;
-        color: #7f8c8d;
-        margin-bottom: 10px;
-    }
-
-    p, li {
-        font-size: 12px;
-    }
-    
-    ul {
-        margin-top: 5px;
-        margin-left: 20px;
-    }
+    h1 { font-size: 14px; color: #ffcc00; margin: 0 0 5px 0; }
+    .date { font-size: 10px; color: #aaaaaa; margin-bottom: 10px; }
+    p, li { font-size: 11px; }
+    ul { margin-top: 5px; margin-left: 20px; }
 </style>
 </head>
 <body>
 
-    <div class="patch-container">
-        <div class="patch-box">
-            <h1>Initial Release (v1.0)</h1>
-            <div class="date">December 7, 2025</div>
-            <p>Initial release of the Project CSD Modpack.</p>
-            <ul>
-                <li>Added core optimization mods.</li>
-                <li>Configured base server settings.</li>
-            </ul>
-        </div>
+    <div class="patch-box">
+        <h1>Initial Release (v1.0)</h1>
+        <div class="date">December 7, 2025</div>
+        <p>Initial release of the Project CSD Modpack.</p>
+        <ul>
+            <li>Added core optimization mods.</li>
+            <li>Configured base server settings.</li>
+        </ul>
     </div>
 
 </body>
