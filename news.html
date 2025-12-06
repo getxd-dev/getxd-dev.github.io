@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>News Page</title>
+<style>
+    body {
+        /* Swing handles basic fonts well */
+        font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+        background-color: #ffffff;
+        color: #000000;
+        margin: 10px;
+    }
+
+    /* NOTE ON SWING RENDERING:
+       1. Swing ignores 'border-radius'. The boxes will likely appear rectangular 
+          unless you use a 3rd party library like 'The CSSBox'.
+       2. Swing struggles with 'rgba' transparency. We use a light hex color 
+          (#f2f2f2) to simulate a "pane" on top of the background.
+    */
+    .patch-container {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .patch-box {
+        /* Use a light grey to simulate the patch note area */
+        background-color: #f2f2f2; 
+        border: 1px solid #cccccc;
+        padding: 10px;
+        margin: 5px;
+    }
+
+    h1 {
+        font-size: 16px;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+
+    .date {
+        font-size: 10px;
+        color: #7f8c8d;
+        margin-bottom: 10px;
+    }
+
+    p, li {
+        font-size: 12px;
+    }
+    
+    ul {
+        margin-top: 5px;
+        margin-left: 20px;
+    }
+</style>
+</head>
+<body>
+
+    <div class="patch-container">
+        <div class="patch-box">
+            <h1>Initial Release (v1.0)</h1>
+            <div class="date">December 7, 2025</div>
+            <p>Initial release of the Project CSD Modpack.</p>
+            <ul>
+                <li>Added core optimization mods.</li>
+                <li>Configured base server settings.</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

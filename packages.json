@@ -1,0 +1,12 @@
+{
+  "minimumVersion" : 1,
+  "packages" : [
+    {
+      "title" : "Project CSD",
+      "name" : "Project CSD",
+      "version" : "2025-12-06-15-34-16",
+      "location" : "project-csd.json",
+      "priority" : 0
+    }
+  ]
+}
