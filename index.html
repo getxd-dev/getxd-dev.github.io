@@ -18,6 +18,8 @@
     
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
@@ -29,6 +31,7 @@
             --text-main: #ffffff;
             --text-muted: #94a3b8;
             --error: #ef4444;
+            --success: #10b981;
         }
 
         * {
@@ -36,6 +39,23 @@
             margin: 0;
             padding: 0;
             -webkit-font-smoothing: antialiased;
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            cursor: none;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0f12; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
         }
 
         body {
@@ -49,9 +69,100 @@
             justify-content: center;
             overflow: hidden;
             position: relative;
+            perspective: 1000px;
         }
 
-        /* Background Handling */
+        /* --- PRELOADER STYLES --- */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f0f12;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .loader-content {
+            width: 300px;
+            text-align: center;
+        }
+
+        .loader-title {
+            font-family: 'Titan One', cursive;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        .loader-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #ef4444);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+            border-radius: 2px;
+            transition: width 2.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .loader-text {
+            font-family: 'Inter', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            min-height: 15px;
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 100000; /* Above preloader */
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background-color: white;
+        }
+
+        .cursor-outline {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        body.hovering .cursor-outline {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* Background Layers */
         .bg-image {
             position: fixed;
             top: 0;
@@ -61,9 +172,10 @@
             background-image: url("https://cdn.discordapp.com/attachments/1406981421297569846/1446698823815659630/2025-12-06_11.03.08.png?ex=6934eec5&is=69339d45&hm=a1e75ae5505ba67120c24ad26e221ddf6d792f00320a554a3f0a9d10220f69f8");
             background-size: cover;
             background-position: center;
-            z-index: -2;
+            z-index: -3;
             filter: blur(8px);
-            transform: scale(1.1); /* Prevents blur edges */
+            transform: scale(1.1);
+            transition: transform 0.1s ease-out;
         }
 
         .bg-overlay {
@@ -73,7 +185,42 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+            z-index: -2;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
             z-index: -1;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: floatParticle 20s infinite linear;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
         /* Main Card Container */
@@ -90,22 +237,25 @@
             box-shadow: 
                 0 25px 50px -12px rgba(0, 0, 0, 0.5),
                 inset 0 0 0 1px rgba(255,255,255,0.05);
-            animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            opacity: 0; 
+            /* Animation triggers via .loaded class now */
         }
 
-        /* Top highlight glow */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        /* Start animations only when loaded */
+        body.loaded .card {
+            animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* 3D Content Layers & Staggered Animations */
         h1 {
             font-family: 'Titan One', cursive;
             font-size: 42px;
@@ -115,12 +265,30 @@
             color: #ffffff;
             text-transform: uppercase;
             text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transform: translateZ(20px);
+            opacity: 0;
+        }
+
+        body.loaded h1 {
+            animation: fadeInStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
         }
 
         .csd-gradient {
             background: linear-gradient(to bottom right, #ef4444, #ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            display: inline-block;
+            position: relative;
+            animation: glitch-anim 5s infinite;
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: translate(0); }
+            2% { transform: translate(-2px, 1px); }
+            4% { transform: translate(1px, -1px); }
+            6% { transform: translate(0); }
+            98% { transform: translate(0); }
+            100% { transform: translate(0); }
         }
 
         p.description {
@@ -129,40 +297,90 @@
             color: var(--text-muted);
             margin-bottom: 32px;
             font-weight: 400;
+            transform: translateZ(10px);
+            opacity: 0;
         }
 
-        /* Buttons */
+        body.loaded p.description {
+            animation: fadeInStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.4s;
+        }
+
+        .btn-container {
+            position: relative;
+            transform: translateZ(15px);
+            opacity: 0;
+        }
+
+        body.loaded .btn-container {
+            animation: fadeInStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
             width: 100%;
             padding: 16px;
             border-radius: 12px;
             font-weight: 600;
             font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            cursor: none;
             text-decoration: none;
             border: none;
             outline: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white;
+            position: relative;
+            overflow: hidden;
+            will-change: transform;
+            background: transparent;
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-            margin-bottom: 16px;
+            transition: box-shadow 0.3s;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        .btn:hover {
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
+        /* Button Background Layers */
+        .btn-bg {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .bg-purple { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); opacity: 1; }
+        .bg-red { background: linear-gradient(135deg, #ef4444, #b91c1c); opacity: 0; }
+        .btn:hover .bg-purple { opacity: 0; }
+        .btn:hover .bg-red { opacity: 1; }
+
+        /* Button Content */
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .default-content { opacity: 1; transform: translateY(0); }
+        .hover-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateY(20px);
+            opacity: 0;
+            width: 100%;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .btn:hover .default-content { opacity: 0; transform: translateY(-20px); }
+        .btn:hover .hover-content { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+
+        @keyframes fadeInStagger {
+            from { opacity: 0; transform: translateY(10px) translateZ(var(--z-depth, 0px)); }
+            to { opacity: 1; transform: translateY(0) translateZ(var(--z-depth, 0px)); }
         }
 
         .links-container {
@@ -172,6 +390,12 @@
             margin-top: 24px;
             border-top: 1px solid rgba(255,255,255,0.05);
             padding-top: 24px;
+            transform: translateZ(5px);
+            opacity: 0;
+        }
+
+        body.loaded .links-container {
+            animation: fadeInStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.6s;
         }
 
         .link-row {
@@ -182,164 +406,177 @@
             color: var(--text-muted);
             font-size: 14px;
             text-decoration: none;
+            cursor: none;
             transition: color 0.2s;
         }
+        .link-row:hover { color: white; }
 
-        .link-row:hover {
-            color: white;
-        }
-
-        /* Custom Modal (Replaces standard Prompt) */
-        .modal-backdrop {
+        footer {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 100;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 20px;
+            z-index: 10;
             opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
         }
 
-        .modal-backdrop.active {
-            opacity: 1;
-            pointer-events: all;
+        body.loaded footer {
+            animation: fadeInStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s;
         }
 
-        .modal {
-            background: #18181b;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 32px;
-            width: 90%;
-            max-width: 400px;
-            transform: scale(0.95);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-backdrop.active .modal {
-            transform: scale(1);
-        }
-
-        .modal-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(234, 179, 8, 0.1);
-            color: #eab308;
-            border-radius: 12px;
+        .footer-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px auto;
-        }
-
-        .modal h2 {
-            font-size: 20px;
-            color: white;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .modal p {
-            font-size: 14px;
             color: var(--text-muted);
-            text-align: center;
-            margin-bottom: 24px;
-            line-height: 1.5;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: none;
+            text-decoration: none;
         }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.05);
+        .footer-icon:hover {
             color: white;
-        }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        /* Input specific styles */
-        .modal-input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            margin-bottom: 8px;
-            outline: none;
-            transition: all 0.2s;
+            background: rgba(88, 101, 242, 0.2);
+            border-color: #5865F2;
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
-        .modal-input:focus {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.1);
-        }
+        /* Helpers */
+        .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; position: relative; z-index: 2; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn.loading .btn-content { display: none; }
+        .btn.loading .spinner { display: block; }
+        
+        /* Modal Styles */
+        .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-backdrop.active { opacity: 1; pointer-events: all; }
+        .modal { background: #18181b; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 32px; width: 90%; max-width: 400px; transform: scale(0.95); transition: transform 0.3s; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+        .modal-backdrop.active .modal { transform: scale(1); }
+        .modal-icon { width: 48px; height: 48px; background: rgba(234, 179, 8, 0.1); color: #eab308; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; }
+        .modal h2 { font-size: 20px; color: white; text-align: center; margin-bottom: 8px; }
+        .modal p { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 12px; }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: white; display: inline-flex; align-items: center; justify-content: center; padding: 16px; border-radius: 12px; font-weight: 600; font-size: 16px; cursor: none; border: none; width: 100%; text-decoration: none; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        .input-wrapper { position: relative; width: 100%; margin-bottom: 8px; }
+        .modal-input { width: 100%; padding: 12px 16px; padding-right: 40px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white; font-size: 14px; outline: none; transition: all 0.2s; cursor: text; }
+        .modal-input:focus { border-color: var(--primary); background: rgba(255, 255, 255, 0.1); }
+        .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: none; transition: color 0.2s; }
+        .toggle-password:hover { color: white; }
+        .error-message { color: var(--error); font-size: 12px; margin-bottom: 16px; min-height: 18px; text-align: center; display: none; }
+        .error-message.show { display: block; animation: shake 0.4s ease-in-out; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
-        .error-message {
-            color: var(--error);
-            font-size: 12px;
-            margin-bottom: 16px;
-            min-height: 18px; /* reserves space */
-            text-align: center;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-            animation: shake 0.4s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
-        }
-
-        @keyframes floatUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* Card Glow Mask */
+        .card::after { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 24px; padding: 1px; background: radial-gradient( 600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.4), transparent 40% ); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; z-index: 2; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); z-index: 3; }
     </style>
 </head>
 <body>
 
-    <div class="bg-image"></div>
-    <div class="bg-overlay"></div>
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="loader-content">
+            <h1 class="loader-title">CSD LAUNCHER</h1>
+            <div class="loader-bar-bg">
+                <div class="loader-bar" id="loader-bar"></div>
+            </div>
+            <div class="loader-text" id="loader-text">INITIALIZING...</div>
+        </div>
+    </div>
 
-    <div class="card">
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <!-- Minimal Audio Engine -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            
+            if (type === 'hover') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05);
+                gain.gain.setValueAtTime(0.02, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'click') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            }
+        }
+    </script>
+
+    <div class="bg-image" id="parallaxBg"></div>
+    <div class="bg-overlay"></div>
+    <div class="noise-overlay"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="card" id="mainCard">
         <h1><span class="csd-gradient">CSD</span> Launcher</h1>
         <p class="description">
-            Experience the next generation launcher. <br>
-            Optimized for performance and simplicity.
+            Made for CSD. <br>
+            Optimized for modpack updating and stuff.
         </p>
 
-        <button class="btn btn-primary" onclick="openJavaModal()">
-            <i data-lucide="download-cloud"></i>
-            Download Launcher
-        </button>
+        <!-- Magnetic Button Wrapper with Hover Effect -->
+        <div class="btn-container">
+            <button class="btn hover-trigger" onclick="playSound('click'); openJavaModal()" onmouseenter="playSound('hover')">
+                <!-- Backgrounds -->
+                <div class="btn-bg bg-purple"></div>
+                <div class="btn-bg bg-red"></div>
+                
+                <!-- Content Layers -->
+                <div class="btn-content default-content">
+                    <i data-lucide="download-cloud"></i>
+                    <span>Download Launcher</span>
+                </div>
+                <div class="btn-content hover-content">
+                    click to join the wildness
+                </div>
+                
+                <!-- Spinner -->
+                <div class="spinner"></div>
+            </button>
+        </div>
 
         <div class="links-container">
-            <a href="https://download.oracle.com/java/17/archive/jdk-17.0.3.1_windows-x64_bin.exe" target="_blank" class="link-row">
+            <a href="https://download.oracle.com/java/17/archive/jdk-17.0.3.1_windows-x64_bin.exe" target="_blank" class="link-row hover-trigger" onmouseenter="playSound('hover')">
                 <i data-lucide="coffee" size="16"></i>
                 <span>Download Java 21 (Required)</span>
             </a>
         </div>
     </div>
 
-    <!-- Modal 1: Java Check -->
+    <!-- Footer -->
+    <footer>
+        <a href="https://discord.com" target="_blank" class="footer-icon hover-trigger" onmouseenter="playSound('hover')" onclick="playSound('click')">
+            <i data-lucide="message-circle"></i>
+        </a>
+    </footer>
+
+    <!-- Modals -->
     <div id="javaModal" class="modal-backdrop">
         <div class="modal">
             <div class="modal-icon">
@@ -347,19 +584,17 @@
             </div>
             <h2>System Requirement</h2>
             <p>This launcher requires <strong>Java 21</strong> or higher to function correctly. Do you have it installed?</p>
-            
             <div class="modal-actions">
-                <a href="https://download.oracle.com/java/17/archive/jdk-17.0.3.1_windows-x64_bin.exe" target="_blank" class="btn btn-secondary" onclick="closeJavaModal()">
+                <a href="https://download.oracle.com/java/17/archive/jdk-17.0.3.1_windows-x64_bin.exe" target="_blank" class="btn-secondary hover-trigger" onclick="playSound('click'); closeJavaModal()">
                     No, get Java
                 </a>
-                <button class="btn btn-primary" onclick="proceedToPassword()">
+                <button class="btn hover-trigger" style="background: var(--primary); color:white; font-weight:600;" onclick="playSound('click'); proceedToPassword()">
                     Yes, Download
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal 2: Password Check -->
     <div id="passwordModal" class="modal-backdrop">
         <div class="modal">
             <div class="modal-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);">
@@ -367,90 +602,202 @@
             </div>
             <h2>Restricted Access</h2>
             <p>Please enter the access key to download this launcher.</p>
-            
-            <input type="password" id="accessKey" class="modal-input" placeholder="Enter password..." autocomplete="off">
+            <div class="input-wrapper">
+                <input type="password" id="accessKey" class="modal-input" placeholder="Enter password..." autocomplete="off">
+                <i data-lucide="eye" size="16" class="toggle-password hover-trigger" id="togglePassword"></i>
+            </div>
             <div id="passwordError" class="error-message">Incorrect password. Please try again.</div>
-
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closePasswordModal()">
+                <button class="btn-secondary hover-trigger" onclick="playSound('click'); closePasswordModal()">
                     Cancel
                 </button>
-                <button class="btn btn-primary" onclick="checkPassword()">
-                    Verify & Download
+                <button id="verifyBtn" class="btn hover-trigger" style="background: var(--primary); color:white; font-weight:600;" onclick="playSound('click'); checkPassword()">
+                    <span class="btn-content">Verify & Download</span>
+                    <div class="spinner"></div>
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize Icons
         lucide.createIcons();
 
+        /* --- PRELOADER LOGIC --- */
+        window.addEventListener('load', () => {
+            const bar = document.getElementById('loader-bar');
+            const text = document.getElementById('loader-text');
+            const preloader = document.getElementById('preloader');
+
+            // Start Animation immediately
+            setTimeout(() => {
+                bar.style.width = "100%";
+            }, 100);
+
+            // Sequence text updates
+            setTimeout(() => { text.innerText = "LOADING ASSETS..."; }, 800);
+            setTimeout(() => { text.innerText = "KILLING RACISTS...."; }, 1600);
+            setTimeout(() => { text.innerText = "WEBSITE READY"; text.style.color = "#10b981"; }, 2400);
+
+            // Finish Loading
+            setTimeout(() => {
+                preloader.style.opacity = "0";
+                setTimeout(() => {
+                    preloader.style.display = "none";
+                    document.body.classList.add('loaded'); // Trigger CSS animations
+                    tiltEnabled = true; // Enable tilt
+                }, 600);
+            }, 2600);
+        });
+
+        /* --- CUSTOM CURSOR --- */
+        const cursorDot = document.getElementById("cursor-dot");
+        const cursorOutline = document.getElementById("cursor-outline");
+        const hoverTriggers = document.querySelectorAll(".hover-trigger, a, button, input");
+
+        window.addEventListener("mousemove", function (e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+        });
+
+        hoverTriggers.forEach(el => {
+            el.addEventListener("mouseenter", () => document.body.classList.add("hovering"));
+            el.addEventListener("mouseleave", () => document.body.classList.remove("hovering"));
+        });
+
+        /* --- TILT & PARALLAX --- */
+        const card = document.getElementById('mainCard');
+        const bgImage = document.getElementById('parallaxBg');
+        let tiltEnabled = false; // Enabled by preloader now
+
+        document.addEventListener('mousemove', (e) => {
+            if (!tiltEnabled) return;
+            const x = e.clientX;
+            const y = e.clientY;
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            
+            if(!document.querySelector('.modal-backdrop.active')) {
+                const rect = card.getBoundingClientRect();
+                const xRelative = x - rect.left;
+                const yRelative = y - rect.top;
+                card.style.setProperty('--mouse-x', `${xRelative}px`);
+                card.style.setProperty('--mouse-y', `${yRelative}px`);
+
+                const xAxis = (w / 2 - x) / 45;
+                const yAxis = (h / 2 - y) / 45;
+                card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+
+            const bgX = (w / 2 - x) / 50; 
+            const bgY = (h / 2 - y) / 50;
+            bgImage.style.transform = `scale(1.1) translate(${bgX}px, ${bgY}px)`;
+        });
+
+        document.addEventListener('mouseleave', () => {
+             if(tiltEnabled) {
+                 card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+                 bgImage.style.transform = `scale(1.1) translate(0, 0)`;
+             }
+        });
+
+        /* --- PARTICLES --- */
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 5 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            particle.style.animationDuration = `${15 + Math.random() * 15}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        /* --- MODALS --- */
         const javaModal = document.getElementById('javaModal');
         const passwordModal = document.getElementById('passwordModal');
         const passwordInput = document.getElementById('accessKey');
         const errorMsg = document.getElementById('passwordError');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const verifyBtn = document.getElementById('verifyBtn');
 
-        // Modal 1 Logic
-        function openJavaModal() {
-            javaModal.classList.add('active');
-        }
+        togglePasswordBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            if (type === 'text') togglePasswordBtn.setAttribute('data-lucide', 'eye-off');
+            else togglePasswordBtn.setAttribute('data-lucide', 'eye');
+            lucide.createIcons();
+            playSound('click');
+        });
 
-        function closeJavaModal() {
-            javaModal.classList.remove('active');
-        }
+        function openJavaModal() { javaModal.classList.add('active'); }
+        function closeJavaModal() { javaModal.classList.remove('active'); }
 
         function proceedToPassword() {
             closeJavaModal();
-            // Small delay for smooth transition between modals
             setTimeout(() => {
                 passwordModal.classList.add('active');
-                passwordInput.value = ''; // Clear previous input
+                passwordInput.value = '';
                 errorMsg.classList.remove('show');
                 passwordInput.focus();
+                card.style.transform = `rotateY(0deg) rotateX(0deg)`;
             }, 200);
         }
 
-        // Modal 2 Logic
         function closePasswordModal() {
             passwordModal.classList.remove('active');
+            verifyBtn.classList.remove('loading');
         }
 
         function checkPassword() {
             const password = passwordInput.value;
-            
-            if (password === "no_gooners") {
-                // Success
-                closePasswordModal();
-                window.location.href = "http://modded.csd-masisikip.tech/csd-launcher.exe";
-            } else {
-                // Error
-                errorMsg.classList.add('show');
-                passwordInput.style.borderColor = "var(--error)";
-                
-                // Reset border color on input
-                passwordInput.addEventListener('input', () => {
-                    passwordInput.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                    errorMsg.classList.remove('show');
-                }, { once: true });
-            }
+            verifyBtn.classList.add('loading');
+            errorMsg.classList.remove('show');
+
+            setTimeout(() => {
+                if (password === "no_gooners") {
+                    triggerConfetti();
+                    setTimeout(() => {
+                        closePasswordModal();
+                        window.location.href = "http://modded.csd-masisikip.tech/csd-launcher.exe";
+                    }, 1000);
+                } else {
+                    verifyBtn.classList.remove('loading');
+                    errorMsg.classList.add('show');
+                    passwordInput.style.borderColor = "var(--error)";
+                    passwordInput.addEventListener('input', () => {
+                        passwordInput.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                        errorMsg.classList.remove('show');
+                    }, { once: true });
+                }
+            }, 1000);
         }
 
-        // Allow 'Enter' key to submit password
+        function triggerConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 200 };
+            var random = function(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+              var timeLeft = animationEnd - Date.now();
+              if (timeLeft <= 0) return clearInterval(interval);
+              var particleCount = 50 * (timeLeft / duration);
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 } }));
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
         passwordInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
+            if (e.key === 'Enter') { playSound('click'); checkPassword(); }
         });
 
-        // Close modals if clicking outside content
         window.onclick = function(event) {
-            if (event.target == javaModal) {
-                closeJavaModal();
-            }
-            if (event.target == passwordModal) {
-                closePasswordModal();
-            }
+            if (event.target == javaModal) closeJavaModal();
+            if (event.target == passwordModal) closePasswordModal();
         }
     </script>
 </body>
