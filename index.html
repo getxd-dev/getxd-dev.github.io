@@ -28,6 +28,7 @@
             --glass-bg: rgba(20, 20, 25, 0.6);
             --text-main: #ffffff;
             --text-muted: #94a3b8;
+            --error: #ef4444;
         }
 
         * {
@@ -267,16 +268,43 @@
             background: rgba(255,255,255,0.1);
         }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: rgba(139, 92, 246, 0.1);
-            color: #a78bfa;
-            border-radius: 100px;
+        /* Input specific styles */
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 8px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .modal-input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .error-message {
+            color: var(--error);
             font-size: 12px;
-            font-weight: 600;
             margin-bottom: 16px;
-            border: 1px solid rgba(139, 92, 246, 0.2);
+            min-height: 18px; /* reserves space */
+            text-align: center;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
         }
 
         @keyframes floatUp {
@@ -294,24 +322,24 @@
     <div class="card">
         <h1><span class="csd-gradient">CSD</span> Launcher</h1>
         <p class="description">
-            Made for CSD  <br>
-            Optimized for modpack updating and stuff
+            Experience the next generation launcher. <br>
+            Optimized for performance and simplicity.
         </p>
 
-        <button class="btn btn-primary" onclick="openModal()">
+        <button class="btn btn-primary" onclick="openJavaModal()">
             <i data-lucide="download-cloud"></i>
             Download Launcher
         </button>
 
         <div class="links-container">
-            <a href="https://download.oracle.com/java/21/archive/jdk-21.0.8_windows-x64_bin.exe" target="_blank" class="link-row">
+            <a href="https://download.oracle.com/java/17/archive/jdk-17.0.3.1_windows-x64_bin.exe" target="_blank" class="link-row">
                 <i data-lucide="coffee" size="16"></i>
                 <span>Download Java 21 (Required)</span>
             </a>
         </div>
     </div>
 
-    <!-- Custom Modal for Java Check -->
+    <!-- Modal 1: Java Check -->
     <div id="javaModal" class="modal-backdrop">
         <div class="modal">
             <div class="modal-icon">
@@ -321,11 +349,34 @@
             <p>This launcher requires <strong>Java 21</strong> or higher to function correctly. Do you have it installed?</p>
             
             <div class="modal-actions">
-                <a href="https://download.oracle.com/java/21/archive/jdk-21.0.8_windows-x64_bin.exe" target="_blank" class="btn btn-secondary" onclick="closeModal()">
+                <a href="https://download.oracle.com/java/17/archive/jdk-17.0.3.1_windows-x64_bin.exe" target="_blank" class="btn btn-secondary" onclick="closeJavaModal()">
                     No, get Java
                 </a>
-                <button class="btn btn-primary" onclick="startDownload()">
+                <button class="btn btn-primary" onclick="proceedToPassword()">
                     Yes, Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Password Check -->
+    <div id="passwordModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+                <i data-lucide="lock" size="24"></i>
+            </div>
+            <h2>Restricted Access</h2>
+            <p>Please enter the access key to download this launcher.</p>
+            
+            <input type="password" id="accessKey" class="modal-input" placeholder="Enter password..." autocomplete="off">
+            <div id="passwordError" class="error-message">Incorrect password. Please try again.</div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closePasswordModal()">
+                    Cancel
+                </button>
+                <button class="btn btn-primary" onclick="checkPassword()">
+                    Verify & Download
                 </button>
             </div>
         </div>
@@ -335,29 +386,72 @@
         // Initialize Icons
         lucide.createIcons();
 
-        const modal = document.getElementById('javaModal');
+        const javaModal = document.getElementById('javaModal');
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordInput = document.getElementById('accessKey');
+        const errorMsg = document.getElementById('passwordError');
 
-        function openModal() {
-            modal.classList.add('active');
+        // Modal 1 Logic
+        function openJavaModal() {
+            javaModal.classList.add('active');
         }
 
-        function closeModal() {
-            modal.classList.remove('active');
+        function closeJavaModal() {
+            javaModal.classList.remove('active');
         }
 
-        function startDownload() {
-            // Close modal
-            closeModal();
-            // Trigger download
-            window.location.href = "http://modded.csd-masisikip.tech/csd-launcher.exe";
+        function proceedToPassword() {
+            closeJavaModal();
+            // Small delay for smooth transition between modals
+            setTimeout(() => {
+                passwordModal.classList.add('active');
+                passwordInput.value = ''; // Clear previous input
+                errorMsg.classList.remove('show');
+                passwordInput.focus();
+            }, 200);
         }
 
-        // Close modal if clicking outside content
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
+        // Modal 2 Logic
+        function closePasswordModal() {
+            passwordModal.classList.remove('active');
+        }
+
+        function checkPassword() {
+            const password = passwordInput.value;
+            
+            if (password === "no_gooners") {
+                // Success
+                closePasswordModal();
+                window.location.href = "http://modded.csd-masisikip.tech/csd-launcher.exe";
+            } else {
+                // Error
+                errorMsg.classList.add('show');
+                passwordInput.style.borderColor = "var(--error)";
+                
+                // Reset border color on input
+                passwordInput.addEventListener('input', () => {
+                    passwordInput.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    errorMsg.classList.remove('show');
+                }, { once: true });
+            }
+        }
+
+        // Allow 'Enter' key to submit password
+        passwordInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkPassword();
             }
         });
+
+        // Close modals if clicking outside content
+        window.onclick = function(event) {
+            if (event.target == javaModal) {
+                closeJavaModal();
+            }
+            if (event.target == passwordModal) {
+                closePasswordModal();
+            }
+        }
     </script>
 </body>
 </html>
